@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { OperationStatusType } from '../Enums';
+import Operation from './Operation';
 
 @Entity({ schema: 'corretora', name: 'operation_status' })
 class OperationStatus {
@@ -20,6 +21,10 @@ class OperationStatus {
 
 	@CreateDateColumn({ name: 'status_date' })
 	statusDate: Date;
+
+	@ManyToOne(() => Operation, (operation: Operation) => operation.operationStatus)
+	@JoinColumn({ name: 'operation_id' })
+	operation: Operation;
 }
 
 export default OperationStatus;

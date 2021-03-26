@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OperationType } from '../Enums';
+import OperationStatus from './OperationStatus';
 
 @Entity({ schema: 'corretora', name: 'operation' })
 class Operation {
@@ -29,6 +30,9 @@ class Operation {
 
 	@Column('enum', { name: 'type', enum: OperationType, enumName: 'operationType' })
 	type: OperationType;
+
+	@OneToMany(() => OperationStatus, (operationStatus) => operationStatus.operation, { eager: true })
+	operationStatus: OperationStatus[];
 }
 
 export default Operation;
