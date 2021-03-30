@@ -2,7 +2,7 @@ import { IsDate, IsNotEmpty, Length } from 'class-validator';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ schema: 'corretora', name: 'client' })
-class Asset {
+class Client {
 	/**
 	 * Properties
 	 */
@@ -19,6 +19,11 @@ class Asset {
 	@Column('varchar', { name: 'cpf' })
 	cpf: string;
 
+	@IsNotEmpty({ message: 'The field email not be empty' })
+	@Length(5, 120, { message: 'The email must be between 5 and 120 characters' })
+	@Column('varchar', { name: 'email' })
+	email: string;
+
 	@IsNotEmpty({ message: 'The field password not be empty' })
 	@Column('varchar', { name: 'password' })
 	password: string;
@@ -32,4 +37,4 @@ class Asset {
 	registerDate: Date;
 }
 
-export default Asset;
+export default Client;

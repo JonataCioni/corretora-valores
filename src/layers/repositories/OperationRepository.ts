@@ -1,5 +1,4 @@
 import { EntityRepository, getRepository } from 'typeorm';
-import { IOperationRequest } from '../interfaces/IOperation';
 import Operation from '../models/Operation';
 
 @EntityRepository(Operation)
@@ -7,10 +6,10 @@ class OperationRepository {
 	/**
 	 * Register
 	 */
-	public async save(request: IOperationRequest): Promise<void> {
+	public async save(operation: Operation): Promise<void> {
 		const operationRepository = getRepository(Operation);
-		const operation = operationRepository.create(request);
-		await operationRepository.save(operation);
+		const result = operationRepository.create(operation);
+		await operationRepository.save(result);
 	}
 	/**
 	 * List

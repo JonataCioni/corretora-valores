@@ -1,5 +1,7 @@
+import { validate } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
 import AppError from '../../errors/AppError';
+import AppValidationError from '../../errors/AppValidationError';
 import { IAssetRequest } from '../interfaces/IAsset';
 import Asset from '../models/Asset';
 import AssetRepository from '../repositories/AssetRepository';
@@ -10,8 +12,16 @@ class AssetService {
 	 */
 	public async save(request: IAssetRequest): Promise<void> {
 		try {
+			const asset: Asset = new Asset();
+			asset.idCompany = request.idCompany;
+			asset.code = request.code;
+			asset.type = request.type;
+			const errors = await validate(asset);
+			if (errors.length > 0) {
+				throw new AppValidationError(errors, 400);
+			}
 			const assetRepository = getCustomRepository(AssetRepository);
-			await assetRepository.save(request);
+			await assetRepository.save(asset);
 		} catch (error) {
 			throw new AppError(`Error on register asset: ${error}!`);
 		}

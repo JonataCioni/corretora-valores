@@ -1,5 +1,4 @@
 import { EntityRepository, getRepository } from 'typeorm';
-import { ICompanyRequest } from '../interfaces/ICompany';
 import Company from '../models/Company';
 
 @EntityRepository(Company)
@@ -7,10 +6,10 @@ class CompanyRepository {
 	/**
 	 * Register
 	 */
-	public async save(request: ICompanyRequest): Promise<void> {
+	public async save(company: Company): Promise<void> {
 		const companyRepository = getRepository(Company);
-		const company = companyRepository.create(request);
-		await companyRepository.save(company);
+		const result = companyRepository.create(company);
+		await companyRepository.save(result);
 	}
 	/**
 	 * List

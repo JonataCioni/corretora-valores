@@ -1,5 +1,4 @@
 import { EntityRepository, getRepository } from 'typeorm';
-import { IAssetRequest } from '../interfaces/IAsset';
 import Asset from '../models/Asset';
 
 @EntityRepository(Asset)
@@ -7,10 +6,10 @@ class AssetRepository {
 	/**
 	 * Register
 	 */
-	public async save(request: IAssetRequest): Promise<void> {
+	public async save(asset: Asset): Promise<void> {
 		const assetRepository = getRepository(Asset);
-		const asset = assetRepository.create(request);
-		await assetRepository.save(asset);
+		const result = assetRepository.create(asset);
+		await assetRepository.save(result);
 	}
 	/**
 	 * List

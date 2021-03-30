@@ -1,5 +1,4 @@
 import { EntityRepository, getRepository } from 'typeorm';
-import { IAccountEventRequest } from '../interfaces/IAcountEvent';
 import AccountEvent from '../models/AccountEvent';
 
 @EntityRepository(AccountEvent)
@@ -7,10 +6,10 @@ class AccountEventRepository {
 	/**
 	 * Register
 	 */
-	public async save(request: IAccountEventRequest): Promise<void> {
+	public async save(accountEvent: AccountEvent): Promise<void> {
 		const accountEventRepository = getRepository(AccountEvent);
-		const accountEvent = accountEventRepository.create(request);
-		await accountEventRepository.save(accountEvent);
+		const result = accountEventRepository.create(accountEvent);
+		await accountEventRepository.save(result);
 	}
 	/**
 	 * List

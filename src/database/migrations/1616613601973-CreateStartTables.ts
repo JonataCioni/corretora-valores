@@ -76,6 +76,10 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							type: 'varchar(11)'
 						},
 						{
+							name: 'email',
+							type: 'varchar(120)'
+						},
+						{
 							name: 'password',
 							type: 'varchar(120)'
 						},

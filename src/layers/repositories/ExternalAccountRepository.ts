@@ -1,5 +1,4 @@
 import { EntityRepository, getRepository } from 'typeorm';
-import { IExternalAccountRequest } from '../interfaces/IExternalAccount';
 import ExternalAccount from '../models/ExternalAccount';
 
 @EntityRepository(ExternalAccount)
@@ -7,10 +6,10 @@ class ExternalAccountRepository {
 	/**
 	 * Register
 	 */
-	public async save(request: IExternalAccountRequest): Promise<void> {
+	public async save(externalAccount: ExternalAccount): Promise<void> {
 		const externalAccountRepository = getRepository(ExternalAccount);
-		const externalAccount = externalAccountRepository.create(request);
-		await externalAccountRepository.save(externalAccount);
+		const result = externalAccountRepository.create(externalAccount);
+		await externalAccountRepository.save(result);
 	}
 	/**
 	 * List
