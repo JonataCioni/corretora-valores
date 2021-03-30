@@ -1,7 +1,8 @@
-import { getRepository } from 'typeorm';
+import { EntityRepository, getRepository } from 'typeorm';
 import { IClientRequest } from '../interfaces/IClient';
 import Client from '../models/Client';
 
+@EntityRepository(Client)
 class ClientRepository {
 	/**
 	 * Register

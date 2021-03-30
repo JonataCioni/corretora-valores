@@ -1,7 +1,8 @@
-import { getRepository } from 'typeorm';
+import { EntityRepository, getRepository } from 'typeorm';
 import { IAssetRequest } from '../interfaces/IAsset';
 import Asset from '../models/Asset';
 
+@EntityRepository(Asset)
 class AssetRepository {
 	/**
 	 * Register

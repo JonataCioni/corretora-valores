@@ -1,3 +1,4 @@
+import { hash } from 'bcryptjs';
 import { getCustomRepository } from 'typeorm';
 import AppError from '../../errors/AppError';
 import { IClientRequest } from '../interfaces/IClient';
@@ -11,6 +12,7 @@ class ClientService {
 	public async save(request: IClientRequest): Promise<void> {
 		try {
 			const clientRepository = getCustomRepository(ClientRepository);
+			request.password = await hash(request.password, 8);
 			await clientRepository.save(request);
 		} catch (error) {
 			throw new AppError(`Error on register client: ${error}!`);

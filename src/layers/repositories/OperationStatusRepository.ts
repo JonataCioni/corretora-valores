@@ -1,7 +1,8 @@
-import { getRepository } from 'typeorm';
+import { EntityRepository, getRepository } from 'typeorm';
 import { IOperationStatusRequest } from '../interfaces/IOperationStatus';
 import OperationStatus from '../models/OperationStatus';
 
+@EntityRepository(OperationStatus)
 class OperationStatusRepository {
 	/**
 	 * Register

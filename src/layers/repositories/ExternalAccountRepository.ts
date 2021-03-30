@@ -1,7 +1,8 @@
-import { getRepository } from 'typeorm';
+import { EntityRepository, getRepository } from 'typeorm';
 import { IExternalAccountRequest } from '../interfaces/IExternalAccount';
 import ExternalAccount from '../models/ExternalAccount';
 
+@EntityRepository(ExternalAccount)
 class ExternalAccountRepository {
 	/**
 	 * Register

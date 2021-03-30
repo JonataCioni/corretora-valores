@@ -1,7 +1,8 @@
-import { getRepository } from 'typeorm';
+import { EntityRepository, getRepository } from 'typeorm';
 import { IAccountEventRequest } from '../interfaces/IAcountEvent';
 import AccountEvent from '../models/AccountEvent';
 
+@EntityRepository(AccountEvent)
 class AccountEventRepository {
 	/**
 	 * Register
