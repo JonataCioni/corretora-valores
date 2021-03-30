@@ -6,10 +6,10 @@ class AssetRepository {
 	/**
 	 * Register
 	 */
-	public async save(asset: Asset): Promise<void> {
+	public async save(asset: Asset): Promise<Asset> {
 		const assetRepository = getRepository(Asset);
 		const result = assetRepository.create(asset);
-		await assetRepository.save(result);
+		return await assetRepository.save(result);
 	}
 	/**
 	 * List

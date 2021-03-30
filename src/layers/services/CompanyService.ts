@@ -10,7 +10,7 @@ class CompanyService {
 	/**
 	 * Register
 	 */
-	public async save(request: ICompanyRequest): Promise<void> {
+	public async save(request: ICompanyRequest): Promise<Company> {
 		try {
 			const company: Company = new Company();
 			company.name = request.name;
@@ -20,8 +20,11 @@ class CompanyService {
 				throw new AppValidationError(errors, 400);
 			}
 			const companyRepository = getCustomRepository(CompanyRepository);
-			await companyRepository.save(company);
+			return await companyRepository.save(company);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register company: ${error}!`);
 		}
 	}

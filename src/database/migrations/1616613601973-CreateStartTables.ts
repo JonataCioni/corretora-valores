@@ -6,13 +6,13 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 		/**
 		 * Creating Tables
 		 */
-		await this.createTableClient(queryRunner);
-		await this.createTableExternalAccount(queryRunner);
 		await this.createTableAccountEvent(queryRunner);
+		await this.createTableAsset(queryRunner);
+		await this.createTableClient(queryRunner);
+		await this.createTableCompany(queryRunner);
+		await this.createTableExternalAccount(queryRunner);
 		await this.createTableOperation(queryRunner);
 		await this.createTableOperationStatus(queryRunner);
-		await this.createTableCompany(queryRunner);
-		await this.createTableAsset(queryRunner);
 		/**
 		 * Creating Foreign Keys
 		 */
@@ -23,28 +23,28 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 		/**
 		 * Drop Table Foreign Keys
 		 */
-		await queryRunner.dropForeignKey('external_account', 'external_account_client');
 		await queryRunner.dropForeignKey('account_event', 'account_event_external_account');
+		await queryRunner.dropForeignKey('asset', 'asset_company');
+		await queryRunner.dropForeignKey('external_account', 'external_account_client');
 		await queryRunner.dropForeignKey('operation', 'operation_client');
 		await queryRunner.dropForeignKey('operation', 'operation_asset');
 		await queryRunner.dropForeignKey('operation_status', 'operation_status_operation');
-		await queryRunner.dropForeignKey('asset', 'asset_company');
 		/**
 		 * Drop Tables
 		 */
-		await queryRunner.dropTable('client');
-		await queryRunner.dropTable('external_account');
 		await queryRunner.dropTable('account_event');
+		await queryRunner.dropTable('asset');
+		await queryRunner.dropTable('client');
+		await queryRunner.dropTable('company');
+		await queryRunner.dropTable('external_account');
 		await queryRunner.dropTable('operation');
 		await queryRunner.dropTable('operation_status');
-		await queryRunner.dropTable('company');
-		await queryRunner.dropTable('asset');
 		/**
 		 * Drop Types
 		 */
+		await queryRunner.query('DROP TYPE "assetType"');
 		await queryRunner.query('DROP TYPE "operationType"');
 		await queryRunner.query('DROP TYPE "statusType"');
-		await queryRunner.query('DROP TYPE "assetType"');
 	}
 
 	public configColumnsTable(otherColums: TableColumnOptions[], pkType = 'int', pkColumnName = 'id'): TableColumnOptions[] {
@@ -59,74 +59,6 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 			},
 			...otherColums
 		];
-	}
-
-	public async createTableClient(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.createTable(
-			new Table({
-				name: 'client',
-				columns: this.configColumnsTable(
-					[
-						{
-							name: 'name',
-							type: 'varchar(120)'
-						},
-						{
-							name: 'cpf',
-							type: 'varchar(11)'
-						},
-						{
-							name: 'email',
-							type: 'varchar(120)'
-						},
-						{
-							name: 'password',
-							type: 'varchar(120)'
-						},
-						{
-							name: 'birth_date',
-							type: 'date'
-						},
-						{
-							name: 'register_date',
-							type: 'timestamp',
-							default: 'now()'
-						}
-					],
-					'bigint'
-				)
-			})
-		);
-	}
-
-	public async createTableExternalAccount(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.createTable(
-			new Table({
-				name: 'external_account',
-				columns: this.configColumnsTable(
-					[
-						{
-							name: 'client_id',
-							type: 'bigint'
-						},
-						{
-							name: 'bank_code',
-							type: 'varchar(5)'
-						},
-						{
-							name: 'bank_branch',
-							type: 'varchar(8)'
-						},
-						{
-							name: 'register_date',
-							type: 'timestamp',
-							default: 'now()'
-						}
-					],
-					'bigint'
-				)
-			})
-		);
 	}
 
 	public async createTableAccountEvent(queryRunner: QueryRunner): Promise<void> {
@@ -163,6 +95,122 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 		);
 	}
 
+	public async createTableAsset(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.createTable(
+			new Table({
+				name: 'asset',
+				columns: this.configColumnsTable(
+					[
+						{
+							name: 'company_id',
+							type: 'int'
+						},
+						{
+							name: 'code',
+							type: 'varchar(10)'
+						},
+						{
+							name: 'type',
+							type: 'enum',
+							enum: ['ON', 'PN', 'PNA', 'PNB', 'UNIT', 'FII', 'CALL', 'PUT'],
+							enumName: 'assetType'
+						}
+					],
+					'int'
+				)
+			})
+		);
+	}
+
+	public async createTableClient(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.createTable(
+			new Table({
+				name: 'client',
+				columns: this.configColumnsTable(
+					[
+						{
+							name: 'name',
+							type: 'varchar(120)'
+						},
+						{
+							name: 'cpf',
+							type: 'varchar(14)'
+						},
+						{
+							name: 'email',
+							type: 'varchar(120)'
+						},
+						{
+							name: 'password',
+							type: 'varchar(120)'
+						},
+						{
+							name: 'birth_date',
+							type: 'date'
+						},
+						{
+							name: 'register_date',
+							type: 'timestamp',
+							default: 'now()'
+						}
+					],
+					'bigint'
+				)
+			})
+		);
+	}
+
+	public async createTableCompany(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.createTable(
+			new Table({
+				name: 'company',
+				columns: this.configColumnsTable(
+					[
+						{
+							name: 'name',
+							type: 'varchar(200)'
+						},
+						{
+							name: 'cnpj',
+							type: 'varchar(18)'
+						}
+					],
+					'int'
+				)
+			})
+		);
+	}
+
+	public async createTableExternalAccount(queryRunner: QueryRunner): Promise<void> {
+		await queryRunner.createTable(
+			new Table({
+				name: 'external_account',
+				columns: this.configColumnsTable(
+					[
+						{
+							name: 'client_id',
+							type: 'bigint'
+						},
+						{
+							name: 'bank_code',
+							type: 'varchar(5)'
+						},
+						{
+							name: 'bank_branch',
+							type: 'varchar(8)'
+						},
+						{
+							name: 'register_date',
+							type: 'timestamp',
+							default: 'now()'
+						}
+					],
+					'bigint'
+				)
+			})
+		);
+	}
+
 	public async createTableOperation(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.createTable(
 			new Table({
@@ -183,7 +231,8 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						},
 						{
 							name: 'executed',
-							type: 'bigint'
+							type: 'bigint',
+							default: 0
 						},
 						{
 							name: 'unitary_value',
@@ -191,7 +240,8 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						},
 						{
 							name: 'tax_value',
-							type: 'decimal(18, 2)'
+							type: 'decimal(18, 2)',
+							default: 0
 						},
 						{
 							name: 'type',
@@ -233,54 +283,6 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						}
 					],
 					'bigint'
-				)
-			})
-		);
-	}
-
-	public async createTableCompany(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.createTable(
-			new Table({
-				name: 'company',
-				columns: this.configColumnsTable(
-					[
-						{
-							name: 'name',
-							type: 'varchar(200)'
-						},
-						{
-							name: 'cnpj',
-							type: 'varchar(14)'
-						}
-					],
-					'int'
-				)
-			})
-		);
-	}
-
-	public async createTableAsset(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.createTable(
-			new Table({
-				name: 'asset',
-				columns: this.configColumnsTable(
-					[
-						{
-							name: 'company_id',
-							type: 'int'
-						},
-						{
-							name: 'code',
-							type: 'varchar(10)'
-						},
-						{
-							name: 'type',
-							type: 'enum',
-							enum: ['ON', 'PN', 'UNIT', 'FII', 'CALL', 'PUT'],
-							enumName: 'assetType'
-						}
-					],
-					'int'
 				)
 			})
 		);

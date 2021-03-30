@@ -5,7 +5,7 @@ export interface IClientRequest {
 	cpf: string;
 	email: string;
 	password: string;
-	birthDate: Date;
+	birthDate: string;
 }
 
 export interface IClientLoginResponse {

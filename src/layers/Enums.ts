@@ -1,6 +1,8 @@
 export enum AssetType {
 	ON = 'ON',
 	PN = 'PN',
+	PNA = 'PNA',
+	PNB = 'PNB',
 	UNIT = 'UNIT',
 	FII = 'FII',
 	CALL = 'CALL',

@@ -10,7 +10,7 @@ class AccountEventService {
 	/**
 	 * Register
 	 */
-	public async save(request: IAccountEventRequest): Promise<void> {
+	public async save(request: IAccountEventRequest): Promise<AccountEvent> {
 		try {
 			const accountEvent: AccountEvent = new AccountEvent();
 			accountEvent.idExternalAccount = request.idExternalAccount;
@@ -22,8 +22,11 @@ class AccountEventService {
 				throw new AppValidationError(errors, 400);
 			}
 			const accountEventRepository = getCustomRepository(AccountEventRepository);
-			await accountEventRepository.save(accountEvent);
+			return await accountEventRepository.save(accountEvent);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register event: ${error}!`);
 		}
 	}

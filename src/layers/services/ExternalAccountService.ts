@@ -10,7 +10,7 @@ class ExternalAccountService {
 	/**
 	 * Register
 	 */
-	public async save(request: IExternalAccountRequest): Promise<void> {
+	public async save(request: IExternalAccountRequest): Promise<ExternalAccount> {
 		try {
 			const externalAccount: ExternalAccount = new ExternalAccount();
 			externalAccount.idClient = request.idClient;
@@ -21,8 +21,11 @@ class ExternalAccountService {
 				throw new AppValidationError(errors, 400);
 			}
 			const externalAccountRepository = getCustomRepository(ExternalAccountRepository);
-			await externalAccountRepository.save(externalAccount);
+			return await externalAccountRepository.save(externalAccount);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register external account: ${error}!`);
 		}
 	}

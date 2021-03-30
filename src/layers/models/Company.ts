@@ -15,7 +15,7 @@ class Company {
 	name: string;
 
 	@IsNotEmpty({ message: 'The field CNPJ not be empty' })
-	@Length(5, 14, { message: 'The name must be between 5 and 14 characters' })
+	@Length(18, 18, { message: 'The name must be 18 characters' })
 	@Column('varchar', { name: 'cnpj' })
 	cnpj: string;
 }

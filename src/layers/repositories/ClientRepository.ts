@@ -6,10 +6,10 @@ class ClientRepository {
 	/**
 	 * Register
 	 */
-	public async save(client: Client): Promise<void> {
+	public async save(client: Client): Promise<Client> {
 		const clientRepository = getRepository(Client);
 		const result = clientRepository.create(client);
-		await clientRepository.save(result);
+		return await clientRepository.save(result);
 	}
 	/**
 	 * List

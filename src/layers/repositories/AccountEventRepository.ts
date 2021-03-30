@@ -6,10 +6,10 @@ class AccountEventRepository {
 	/**
 	 * Register
 	 */
-	public async save(accountEvent: AccountEvent): Promise<void> {
+	public async save(accountEvent: AccountEvent): Promise<AccountEvent> {
 		const accountEventRepository = getRepository(AccountEvent);
 		const result = accountEventRepository.create(accountEvent);
-		await accountEventRepository.save(result);
+		return await accountEventRepository.save(result);
 	}
 	/**
 	 * List

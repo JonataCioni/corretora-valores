@@ -13,21 +13,24 @@ class ClientService {
 	/**
 	 * Register
 	 */
-	public async save(request: IClientRequest): Promise<void> {
+	public async save(request: IClientRequest): Promise<Client> {
 		try {
 			const client: Client = new Client();
 			client.name = request.name;
 			client.cpf = request.cpf;
 			client.email = request.email;
-			client.birthDate = request.birthDate;
+			client.birthDate = new Date(request.birthDate);
 			client.password = await hash(request.password, 8);
 			const errors = await validate(client);
 			if (errors.length > 0) {
 				throw new AppValidationError(errors, 400);
 			}
 			const clientRepository = getCustomRepository(ClientRepository);
-			await clientRepository.save(client);
+			return await clientRepository.save(client);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register client: ${error}!`);
 		}
 	}

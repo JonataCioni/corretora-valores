@@ -10,7 +10,7 @@ class OperationStatusService {
 	/**
 	 * Register
 	 */
-	public async save(request: IOperationStatusRequest): Promise<void> {
+	public async save(request: IOperationStatusRequest): Promise<OperationStatus> {
 		try {
 			const operationStatus: OperationStatus = new OperationStatus();
 			operationStatus.idOperation = request.idOperation;
@@ -20,9 +20,12 @@ class OperationStatusService {
 			if (errors.length > 0) {
 				throw new AppValidationError(errors, 400);
 			}
-			const operationRepository = getCustomRepository(OperationStatusRepository);
-			await operationRepository.save(operationStatus);
+			const operationStatusRepository = getCustomRepository(OperationStatusRepository);
+			return await operationStatusRepository.save(operationStatus);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register operation: ${error}!`);
 		}
 	}

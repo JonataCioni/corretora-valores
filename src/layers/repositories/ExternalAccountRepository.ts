@@ -6,10 +6,10 @@ class ExternalAccountRepository {
 	/**
 	 * Register
 	 */
-	public async save(externalAccount: ExternalAccount): Promise<void> {
+	public async save(externalAccount: ExternalAccount): Promise<ExternalAccount> {
 		const externalAccountRepository = getRepository(ExternalAccount);
 		const result = externalAccountRepository.create(externalAccount);
-		await externalAccountRepository.save(result);
+		return await externalAccountRepository.save(result);
 	}
 	/**
 	 * List

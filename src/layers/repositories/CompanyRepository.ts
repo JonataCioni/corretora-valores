@@ -6,10 +6,10 @@ class CompanyRepository {
 	/**
 	 * Register
 	 */
-	public async save(company: Company): Promise<void> {
+	public async save(company: Company): Promise<Company> {
 		const companyRepository = getRepository(Company);
 		const result = companyRepository.create(company);
-		await companyRepository.save(result);
+		return await companyRepository.save(result);
 	}
 	/**
 	 * List

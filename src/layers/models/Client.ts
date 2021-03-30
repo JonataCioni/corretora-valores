@@ -15,7 +15,7 @@ class Client {
 	name: string;
 
 	@IsNotEmpty({ message: 'The field CPF not be empty' })
-	@Length(5, 120, { message: 'The CPF must be 11 characters' })
+	@Length(14, 14, { message: 'The CPF must be 14 characters' })
 	@Column('varchar', { name: 'cpf' })
 	cpf: string;
 

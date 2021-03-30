@@ -6,10 +6,10 @@ class OperationStatusRepository {
 	/**
 	 * Register
 	 */
-	public async save(operationStatus: OperationStatus): Promise<void> {
+	public async save(operationStatus: OperationStatus): Promise<OperationStatus> {
 		const operationStatusRepository = getRepository(OperationStatus);
 		const result = operationStatusRepository.create(operationStatus);
-		await operationStatusRepository.save(result);
+		return await operationStatusRepository.save(result);
 	}
 	/**
 	 * List

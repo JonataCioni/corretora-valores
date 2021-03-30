@@ -10,7 +10,7 @@ class AssetService {
 	/**
 	 * Register
 	 */
-	public async save(request: IAssetRequest): Promise<void> {
+	public async save(request: IAssetRequest): Promise<Asset> {
 		try {
 			const asset: Asset = new Asset();
 			asset.idCompany = request.idCompany;
@@ -21,8 +21,11 @@ class AssetService {
 				throw new AppValidationError(errors, 400);
 			}
 			const assetRepository = getCustomRepository(AssetRepository);
-			await assetRepository.save(asset);
+			return await assetRepository.save(asset);
 		} catch (error) {
+			if (error instanceof AppValidationError) {
+				throw error;
+			}
 			throw new AppError(`Error on register asset: ${error}!`);
 		}
 	}
