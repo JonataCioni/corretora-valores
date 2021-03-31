@@ -19,6 +19,11 @@ class Client {
 	@Column('varchar', { name: 'cpf' })
 	cpf: string;
 
+	@IsNotEmpty({ message: 'The field Account not be empty' })
+	@Length(6, 6, { message: 'The Account must be 6 characters' })
+	@Column('varchar', { name: 'account' })
+	account: string;
+
 	@IsNotEmpty({ message: 'The field email not be empty' })
 	@Length(5, 120, { message: 'The email must be between 5 and 120 characters' })
 	@Column('varchar', { name: 'email' })
@@ -32,6 +37,9 @@ class Client {
 	@IsDate({ message: 'The field birth date not valid' })
 	@Column('date', { name: 'birth_date' })
 	birthDate: Date;
+
+	@Column('varchar', { name: 'amount', default: 0 })
+	amount: number;
 
 	@CreateDateColumn({ name: 'register_date' })
 	registerDate: Date;

@@ -42,6 +42,8 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 		/**
 		 * Drop Types
 		 */
+		await queryRunner.query('DROP TYPE "eventType"');
+		await queryRunner.query('DROP TYPE "eventStatus"');
 		await queryRunner.query('DROP TYPE "assetType"');
 		await queryRunner.query('DROP TYPE "operationType"');
 		await queryRunner.query('DROP TYPE "statusType"');
@@ -73,7 +75,9 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						},
 						{
 							name: 'name',
-							type: 'varchar(10)'
+							type: 'enum',
+							enum: ['DEPOSIT', 'DRAFT'],
+							enumName: 'eventType'
 						},
 						{
 							name: 'account',
@@ -82,6 +86,12 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						{
 							name: 'amount',
 							type: 'decimal(18, 2)'
+						},
+						{
+							name: 'status',
+							type: 'enum',
+							enum: ['NONPROCESSED', 'PROCESSED'],
+							enumName: 'eventStatus'
 						},
 						{
 							name: 'event_date',
@@ -137,6 +147,10 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							type: 'varchar(14)'
 						},
 						{
+							name: 'account',
+							type: 'varchar(6)'
+						},
+						{
 							name: 'email',
 							type: 'varchar(120)'
 						},
@@ -147,6 +161,11 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						{
 							name: 'birth_date',
 							type: 'date'
+						},
+						{
+							name: 'amount',
+							type: 'decimal(18, 2)',
+							default: '0'
 						},
 						{
 							name: 'register_date',

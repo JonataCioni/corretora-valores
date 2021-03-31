@@ -1,9 +1,10 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { OperationType } from '../Enums';
+import Asset from './Asset';
 import OperationStatus from './OperationStatus';
 
-@Entity({ schema: 'corretora', name: 'operation' })
+@Entity({ schema: 'corretora', name: 'operation', orderBy: { idAsset: 'DESC', type: 'DESC' } })
 class Operation {
 	/**
 	 * Properties
@@ -39,6 +40,10 @@ class Operation {
 	@IsNotEmpty({ message: 'The type not be empty' })
 	@Column('enum', { name: 'type', enum: OperationType, enumName: 'operationType' })
 	type: OperationType;
+
+	@ManyToOne(() => Asset, { eager: true })
+	@JoinColumn({ name: 'asset_id' })
+	asset: Asset;
 
 	@OneToMany(() => OperationStatus, (operationStatus) => operationStatus.operation, { eager: true })
 	operationStatus: OperationStatus[];

@@ -32,10 +32,10 @@ class ExternalAccountService {
 	/**
 	 * List
 	 */
-	public async list(): Promise<ExternalAccount[]> {
+	public async list(idClient: number): Promise<ExternalAccount[]> {
 		try {
 			const externalAccountRepository = getCustomRepository(ExternalAccountRepository);
-			const resultList = await externalAccountRepository.list();
+			const resultList = await externalAccountRepository.list(idClient);
 			return resultList;
 		} catch (error) {
 			throw new AppError(`Error on list external accounts: ${error}!`);

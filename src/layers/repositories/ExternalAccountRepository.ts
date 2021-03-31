@@ -1,4 +1,4 @@
-import { EntityRepository, getRepository } from 'typeorm';
+import { EntityRepository, FindManyOptions, getRepository } from 'typeorm';
 import ExternalAccount from '../models/ExternalAccount';
 
 @EntityRepository(ExternalAccount)
@@ -14,9 +14,17 @@ class ExternalAccountRepository {
 	/**
 	 * List
 	 */
-	public async list(): Promise<ExternalAccount[]> {
+	public async list(idClient: number): Promise<ExternalAccount[]> {
 		const externalAccountRepository = getRepository(ExternalAccount);
-		const resultList = await externalAccountRepository.find();
+		const resultList = await externalAccountRepository.find({ where: { idClient: idClient } });
+		return resultList;
+	}
+	/**
+	 * Filter
+	 */
+	public async filter(options?: FindManyOptions<ExternalAccount>): Promise<ExternalAccount[]> {
+		const externalAccountRepository = getRepository(ExternalAccount);
+		const resultList = await externalAccountRepository.find(options);
 		return resultList;
 	}
 }

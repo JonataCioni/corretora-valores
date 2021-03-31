@@ -8,7 +8,32 @@ export interface IClientRequest {
 	birthDate: string;
 }
 
+export interface IClientLoginRequest {
+	login: string;
+	password: string;
+}
+
 export interface IClientLoginResponse {
 	client: Client;
 	token: string;
+}
+
+export interface ICalcPosition {
+	symbol: string;
+	quantity: number[];
+	values: number[];
+}
+
+export interface IPosition {
+	symbol: string;
+	quantity: number;
+	currentPrice: number;
+	averagePrice: number;
+	currentGain: string;
+}
+
+export interface IClientAccountDataResponse {
+	checkingAccountAmount: number; // Saldo em conta corrente
+	positions: IPosition[];
+	consolidated: number;
 }

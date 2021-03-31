@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import ExternalAccount from '../models/ExternalAccount';
 import ExternalAccountService from '../services/ExternalAccountService';
 
 class ExternalAccountController {
@@ -8,9 +9,13 @@ class ExternalAccountController {
 		return response.json(externalAccount);
 	}
 
-	public async list(_: Request, response: Response): Promise<Response<any, Record<string, any>>> {
+	public async list(request: Request, response: Response): Promise<Response<any, Record<string, any>>> {
 		const externalAccountService = new ExternalAccountService();
-		const externalAccounts = await externalAccountService.list();
+		let externalAccounts = new Array<ExternalAccount>();
+		if (request.params?.idCliente) {
+			const clientId = parseInt(request.params?.idCliente);
+			externalAccounts = await externalAccountService.list(clientId);
+		}
 		return response.json(externalAccounts);
 	}
 }

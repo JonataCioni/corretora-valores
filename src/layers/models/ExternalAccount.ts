@@ -14,12 +14,12 @@ class ExternalAccount {
 	idClient: number;
 
 	@IsNotEmpty({ message: 'The bank code not be empty' })
-	@Length(5, 8, { message: 'The name code must be 5 characters' })
+	@Length(3, 5, { message: 'The bank code must be between 3 and 5 characters' })
 	@Column('varchar', { name: 'bank_code' })
 	bankCode: string;
 
 	@IsNotEmpty({ message: 'The bank branch not be empty' })
-	@Length(5, 8, { message: 'The name code must be 8 characters' })
+	@Length(5, 8, { message: 'The bank branch must be between 5 and 8 characters' })
 	@Column('varchar', { name: 'bank_branch' })
 	bankBranch: string;
 

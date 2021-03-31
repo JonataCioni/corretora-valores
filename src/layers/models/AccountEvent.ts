@@ -1,7 +1,8 @@
 import { IsNotEmpty, Length } from 'class-validator';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { EventStatus, EventType } from '../Enums';
 
-@Entity({ schema: 'corretora', name: 'account_event' })
+@Entity({ schema: 'corretora', name: 'account_event', orderBy: { name: 'ASC', id: 'ASC' } })
 class AccountEvent {
 	/**
 	 * Properties
@@ -13,17 +14,19 @@ class AccountEvent {
 	@Column('bigint', { name: 'external_account_id' })
 	idExternalAccount: number;
 
-	@Length(3, 10, { message: 'The name field must be between 3 and 10 characters' })
-	@Column('varchar', { name: 'name' })
-	name: string;
+	@Column('enum', { name: 'name', enum: EventType, enumName: 'eventType' })
+	name: EventType;
 
-	@Length(8, 8, { message: 'The account field must be 8 characters' })
+	@Length(6, 6, { message: 'The account field must be 6 characters' })
 	@Column('varchar', { name: 'account' })
 	account: string;
 
 	@IsNotEmpty({ message: 'The amount not be empty' })
 	@Column('decimal', { name: 'amount' })
 	amount: number;
+
+	@Column('enum', { name: 'status', enum: EventStatus, enumName: 'eventStatus' })
+	status: EventStatus;
 
 	@CreateDateColumn({ name: 'event_date' })
 	eventDate: Date;

@@ -1,6 +1,7 @@
 import { IsEnum, IsNotEmpty, Length } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AssetType } from '../Enums';
+import Company from './Company';
 
 @Entity({ schema: 'corretora', name: 'asset' })
 class Asset {
@@ -22,6 +23,10 @@ class Asset {
 	@IsEnum(AssetType, { message: 'Incorrect Type' })
 	@Column('enum', { name: 'type', enum: AssetType, enumName: 'assetType' })
 	type: AssetType;
+
+	@ManyToOne(() => Company, { eager: true })
+	@JoinColumn({ name: 'company_id' })
+	company: Company;
 }
 
 export default Asset;

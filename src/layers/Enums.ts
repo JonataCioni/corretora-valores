@@ -1,3 +1,13 @@
+export enum EventType {
+	DEPOSIT = 'DEPOSIT',
+	DRAFT = 'DRAFT'
+}
+
+export enum EventStatus {
+	NONPROCESSED = 'NONPROCESSED',
+	PROCESSED = 'PROCESSED'
+}
+
 export enum AssetType {
 	ON = 'ON',
 	PN = 'PN',

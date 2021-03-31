@@ -3,11 +3,20 @@ import { validate } from 'class-validator';
 import { sign } from 'jsonwebtoken';
 import { getCustomRepository } from 'typeorm';
 import authConfig from '../../config/auth';
+import { currentPrice } from '../../database/currentPrice';
 import AppError from '../../errors/AppError';
 import AppValidationError from '../../errors/AppValidationError';
-import { IClientLoginResponse, IClientRequest } from '../interfaces/IClient';
+import {
+	ICalcPosition,
+	IClientAccountDataResponse,
+	IClientLoginRequest,
+	IClientLoginResponse,
+	IClientRequest,
+	IPosition
+} from '../interfaces/IClient';
 import Client from '../models/Client';
 import ClientRepository from '../repositories/ClientRepository';
+import OperationRepository from '../repositories/OperationRepository';
 
 class ClientService {
 	/**
@@ -15,17 +24,19 @@ class ClientService {
 	 */
 	public async save(request: IClientRequest): Promise<Client> {
 		try {
+			const clientRepository = getCustomRepository(ClientRepository);
+			const numberAccountGenerate = await clientRepository.countClients();
 			const client: Client = new Client();
 			client.name = request.name;
 			client.cpf = request.cpf;
 			client.email = request.email;
 			client.birthDate = new Date(request.birthDate);
 			client.password = await hash(request.password, 8);
+			client.account = (numberAccountGenerate + 1).toString().padStart(6, '0');
 			const errors = await validate(client);
 			if (errors.length > 0) {
 				throw new AppValidationError(errors, 400);
 			}
-			const clientRepository = getCustomRepository(ClientRepository);
 			return await clientRepository.save(client);
 		} catch (error) {
 			if (error instanceof AppValidationError) {
@@ -47,20 +58,75 @@ class ClientService {
 		}
 	}
 	/**
+	 * List Positions
+	 */
+	public async listPositions(id: number): Promise<IClientAccountDataResponse> {
+		try {
+			const position: IClientAccountDataResponse = {
+				positions: new Array<IPosition>(),
+				consolidated: 0,
+				checkingAccountAmount: 0
+			};
+			const clientRepository = getCustomRepository(ClientRepository);
+			const client = await clientRepository.getById(id);
+			position.checkingAccountAmount = client.amount;
+			const operationRepository = getCustomRepository(OperationRepository);
+			const resultList = await operationRepository.getByClient(id);
+			const calcPositions: ICalcPosition[] = new Array<ICalcPosition>();
+			resultList.forEach((operation) => {
+				const getCalcPosition = calcPositions.filter((p) => p.symbol === operation.asset.code);
+				if (getCalcPosition.length <= 0) {
+					calcPositions.push({
+						symbol: operation.asset.code,
+						quantity: [operation.executed],
+						values: [operation.unitaryValue]
+					});
+				} else {
+					getCalcPosition[0].quantity.push(operation.executed);
+					getCalcPosition[0].values.push(operation.unitaryValue);
+				}
+				position.consolidated += operation.unitaryValue * operation.executed;
+			});
+			calcPositions.forEach((positionCalc) => {
+				const cp = currentPrice.filter((cpr) => cpr.symbol === positionCalc.symbol)[0];
+				let totalValue = 0;
+				let totalQtt = 0;
+				for (let i = 0; i < positionCalc.quantity.length; i++) {
+					const actualQtt = parseInt(positionCalc.quantity[i].toString());
+					totalQtt += actualQtt;
+					const actualPrice = parseFloat(positionCalc.values[i].toString());
+					totalValue += actualQtt * actualPrice;
+				}
+				const averagePrice = parseFloat((totalValue / totalQtt).toFixed(2));
+				const currentGain = `${((cp.value / averagePrice) * 100 - 100).toFixed(2)}%`;
+				position.positions.push({
+					symbol: positionCalc.symbol,
+					currentPrice: cp.value,
+					quantity: totalQtt,
+					averagePrice: averagePrice,
+					currentGain: currentGain
+				});
+			});
+			return position;
+		} catch (error) {
+			throw new AppError(`Error on list clients: ${error}!`);
+		}
+	}
+	/**
 	 * Authentication
 	 */
-	public async login(login: string, password: string): Promise<IClientLoginResponse> {
+	public async login(request: IClientLoginRequest): Promise<IClientLoginResponse> {
 		const clientRepository = getCustomRepository(ClientRepository);
-		let client: Client = new Client();
+		let client;
 		const regexVerifyTypeLogin = new RegExp('^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$', 'gim');
-		const matchLogin = login.match(regexVerifyTypeLogin);
+		const matchLogin = request.login.match(regexVerifyTypeLogin);
 		if (matchLogin !== undefined && matchLogin !== null && matchLogin.length > 0) {
-			client = await clientRepository.getByCpf(login);
+			client = await clientRepository.getByCpf(request.login);
 		} else {
-			client = await clientRepository.getByEmail(login);
+			client = await clientRepository.getByEmail(request.login);
 		}
-		if (client.id > 0) {
-			const validCombination = await compare(password, client.password);
+		if (client !== null && client.id > 0) {
+			const validCombination = await compare(request.password, client.password);
 			if (validCombination) {
 				const token = sign({}, authConfig.jwt.secret, {
 					subject: client.id.toString(),
