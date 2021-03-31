@@ -65,7 +65,8 @@ class ClientService {
 			const position: IClientAccountDataResponse = {
 				positions: new Array<IPosition>(),
 				consolidated: 0,
-				checkingAccountAmount: 0
+				checkingAccountAmount: 0,
+				consolidatedGain: ''
 			};
 			const clientRepository = getCustomRepository(ClientRepository);
 			const client = await clientRepository.getById(id);
@@ -74,6 +75,7 @@ class ClientService {
 			const resultList = await operationRepository.getByClient(id);
 			const calcPositions: ICalcPosition[] = new Array<ICalcPosition>();
 			resultList.forEach((operation) => {
+				const cp = currentPrice.filter((cpr) => cpr.symbol === operation.asset.code)[0];
 				const getCalcPosition = calcPositions.filter((p) => p.symbol === operation.asset.code);
 				if (getCalcPosition.length <= 0) {
 					calcPositions.push({
@@ -85,28 +87,31 @@ class ClientService {
 					getCalcPosition[0].quantity.push(operation.executed);
 					getCalcPosition[0].values.push(operation.unitaryValue);
 				}
-				position.consolidated += operation.unitaryValue * operation.executed;
+				position.consolidated += cp.value * operation.executed;
 			});
+			let totalValue = 0;
 			calcPositions.forEach((positionCalc) => {
 				const cp = currentPrice.filter((cpr) => cpr.symbol === positionCalc.symbol)[0];
-				let totalValue = 0;
-				let totalQtt = 0;
+				let totalPositionValue = 0;
+				let totalPositionQtt = 0;
 				for (let i = 0; i < positionCalc.quantity.length; i++) {
 					const actualQtt = parseInt(positionCalc.quantity[i].toString());
-					totalQtt += actualQtt;
+					totalPositionQtt += actualQtt;
 					const actualPrice = parseFloat(positionCalc.values[i].toString());
-					totalValue += actualQtt * actualPrice;
+					totalPositionValue += actualQtt * actualPrice;
 				}
-				const averagePrice = parseFloat((totalValue / totalQtt).toFixed(2));
+				totalValue += totalPositionValue;
+				const averagePrice = parseFloat((totalPositionValue / totalPositionQtt).toFixed(2));
 				const currentGain = `${((cp.value / averagePrice) * 100 - 100).toFixed(2)}%`;
 				position.positions.push({
 					symbol: positionCalc.symbol,
 					currentPrice: cp.value,
-					quantity: totalQtt,
+					quantity: totalPositionQtt,
 					averagePrice: averagePrice,
 					currentGain: currentGain
 				});
 			});
+			position.consolidatedGain = `${((position.consolidated / totalValue) * 100 - 100).toFixed(2)}%`;
 			return position;
 		} catch (error) {
 			throw new AppError(`Error on list clients: ${error}!`);

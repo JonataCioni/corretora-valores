@@ -36,4 +36,5 @@ export interface IClientAccountDataResponse {
 	checkingAccountAmount: number; // Saldo em conta corrente
 	positions: IPosition[];
 	consolidated: number;
+	consolidatedGain: string;
 }
