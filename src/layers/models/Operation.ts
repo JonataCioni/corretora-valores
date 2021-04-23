@@ -9,11 +9,11 @@ class Operation {
 	/**
 	 * Properties
 	 */
-	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'bigint' })
+	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'int' })
 	id: number;
 
 	@IsNotEmpty({ message: 'The Client not be empty' })
-	@Column('bigint', { name: 'client_id' })
+	@Column('int', { name: 'client_id' })
 	idClient: number;
 
 	@IsNotEmpty({ message: 'The Asset not be empty' })
@@ -21,20 +21,26 @@ class Operation {
 	idAsset: number;
 
 	@IsNotEmpty({ message: 'The total quantity not be empty' })
-	@Column('bigint', { name: 'quantity' })
+	@Column('int', { name: 'quantity' })
 	quantity: number;
 
 	@IsNotEmpty({ message: 'The total executed not be empty' })
-	@Column('bigint', { name: 'executed' })
+	@Column('int', { name: 'executed' })
 	executed: number;
 
 	@IsNotEmpty({ message: 'The unitary value not be empty' })
 	@Column('decimal', { name: 'unitary_value' })
 	unitaryValue: number;
 
-	@IsNotEmpty({ message: 'The tax value not be empty' })
-	@Column('decimal', { name: 'tax_value' })
-	taxValue: number;
+	@IsNotEmpty({ message: 'The negotiation tax value not be empty' })
+	@Column('decimal', { name: 'negotiation_tax_value' })
+	negotiationTaxValue: number;
+
+	@IsNotEmpty({ message: 'The sale off tax value not be empty' })
+	@Column('decimal', { name: 'sale_off_tax_value' })
+	saleOffTaxValue: number;
+
+	sumTaxValues: number;
 
 	@IsEnum(OperationType, { message: 'Type is not valid' })
 	@IsNotEmpty({ message: 'The type not be empty' })

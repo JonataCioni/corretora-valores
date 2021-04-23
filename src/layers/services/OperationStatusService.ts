@@ -8,8 +8,9 @@ import OperationStatus from '../models/OperationStatus';
 import ClientRepository from '../repositories/ClientRepository';
 import OperationRepository from '../repositories/OperationRepository';
 import OperationStatusRepository from '../repositories/OperationStatusRepository';
+import ServiceUtils from './ServiceUtils';
 
-class OperationStatusService {
+class OperationStatusService extends ServiceUtils {
 	/**
 	 * Register
 	 */
@@ -18,6 +19,13 @@ class OperationStatusService {
 			//get operation
 			const operationRepository = getCustomRepository(OperationRepository);
 			const operation = await operationRepository.getById(request.idOperation);
+			if (operation.operationStatus.filter((os) => os.type === OperationStatusType.REJECTD).length > 0) {
+				throw new AppError('Operation Rejected, it is not possible to modify it');
+			}
+			const canceledStatus: OperationStatusType[] = new Array<OperationStatusType>(OperationStatusType.PRTCCLD, OperationStatusType.TTLCCLD);
+			if (operation.operationStatus.filter((os) => canceledStatus.filter((s) => s === os.type).length > 0).length > 0) {
+				throw new AppError('Operation Canceled, it is not possible to modify it');
+			}
 			//get client
 			const clientRepository = getCustomRepository(ClientRepository);
 			//register status of operation
@@ -41,9 +49,9 @@ class OperationStatusService {
 				throw new AppError('Error on update executed quantity');
 			}
 			if (request.type === OperationStatusType.TTLEXEC) {
-				const calcTaxValue = operation.quantity * operation.unitaryValue * 0.0003;
-				const resultUpdateAmountAccountTax = await clientRepository.updateAccountAmount(operation.idClient, calcTaxValue * -1);
-				const resultUpdatetaxValue = operationRepository.updateTaxValue(operation.id, calcTaxValue);
+				const calcValue = this.calculateOperationValues(operation.quantity, operation.unitaryValue);
+				const resultUpdateAmountAccountTax = await clientRepository.updateAccountAmount(operation.idClient, calcValue.totalTaxes * -1);
+				const resultUpdatetaxValue = operationRepository.updateTaxValue(operation.id, calcValue);
 				if (!resultUpdatetaxValue || !resultUpdateAmountAccountTax) {
 					throw new AppError('Error on update tax value');
 				}

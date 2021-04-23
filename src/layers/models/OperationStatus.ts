@@ -8,15 +8,15 @@ class OperationStatus {
 	/**
 	 * Properties
 	 */
-	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'bigint' })
+	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'int' })
 	id: number;
 
 	@IsNotEmpty({ message: 'The Operation not be empty' })
-	@Column('bigint', { name: 'operation_id' })
+	@Column('int', { name: 'operation_id' })
 	idOperation: number;
 
 	@IsNotEmpty({ message: 'The quantity not be empty' })
-	@Column('bigint', { name: 'quantity' })
+	@Column('int', { name: 'quantity' })
 	quantity: number;
 
 	@IsEnum(OperationStatusType, { message: 'Type is not valid' })

@@ -1,7 +1,7 @@
 export const currentPrice = [
 	{
 		symbol: 'PETR3',
-		value: 33.96
+		value: 31.96
 	},
 	{
 		symbol: 'PETR4',
@@ -9,7 +9,7 @@ export const currentPrice = [
 	},
 	{
 		symbol: 'AERI3',
-		value: 18.84
+		value: 15.84
 	},
 	{
 		symbol: 'USIM3',
@@ -17,7 +17,7 @@ export const currentPrice = [
 	},
 	{
 		symbol: 'USIM5',
-		value: 17.07
+		value: 18.1
 	},
 	{
 		symbol: 'USIM6',

@@ -29,5 +29,6 @@ export enum OperationStatusType {
 	PRTEXEC = 'PRTEXEC',
 	TTLEXEC = 'TTLEXEC',
 	REJECTD = 'REJECTD',
-	CANCELD = 'CANCELD'
+	PRTCCLD = 'PRTCCLD',
+	TTLCCLD = 'TTLCCLD'
 }

@@ -21,6 +21,10 @@ class AssetService {
 				throw new AppValidationError(errors, 400);
 			}
 			const assetRepository = getCustomRepository(AssetRepository);
+			const existsAsset = await assetRepository.filter({ where: { code: request.code } });
+			if (existsAsset.length > 0) {
+				throw new Error('Asset already exists');
+			}
 			return await assetRepository.save(asset);
 		} catch (error) {
 			if (error instanceof AppValidationError) {

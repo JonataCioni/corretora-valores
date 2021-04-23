@@ -7,3 +7,11 @@ export interface IOperationRequest {
 	unitaryValue: number;
 	type: OperationType;
 }
+
+export interface ITaxValues {
+	totalOperationValue: number;
+	totalOperationWithTaxes: number;
+	totalNegotiationTax: number;
+	totalSaleOffTax: number;
+	totalTaxes: number;
+}

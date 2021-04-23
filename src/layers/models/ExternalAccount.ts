@@ -6,11 +6,11 @@ class ExternalAccount {
 	/**
 	 * Properties
 	 */
-	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'bigint' })
+	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'int' })
 	id: number;
 
 	@IsNotEmpty({ message: 'The Client not be empty' })
-	@Column('bigint', { name: 'client_id' })
+	@Column('int', { name: 'client_id' })
 	idClient: number;
 
 	@IsNotEmpty({ message: 'The bank code not be empty' })

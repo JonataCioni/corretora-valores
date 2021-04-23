@@ -71,7 +71,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 					[
 						{
 							name: 'external_account_id',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'name',
@@ -99,7 +99,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							default: 'now()'
 						}
 					],
-					'bigint'
+					'int'
 				)
 			})
 		);
@@ -173,7 +173,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							default: 'now()'
 						}
 					],
-					'bigint'
+					'int'
 				)
 			})
 		);
@@ -208,7 +208,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 					[
 						{
 							name: 'client_id',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'bank_code',
@@ -224,7 +224,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							default: 'now()'
 						}
 					],
-					'bigint'
+					'int'
 				)
 			})
 		);
@@ -238,7 +238,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 					[
 						{
 							name: 'client_id',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'asset_id',
@@ -246,11 +246,11 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 						},
 						{
 							name: 'quantity',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'executed',
-							type: 'bigint',
+							type: 'int',
 							default: 0
 						},
 						{
@@ -258,7 +258,12 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							type: 'decimal(18, 2)'
 						},
 						{
-							name: 'tax_value',
+							name: 'negotiation_tax_value',
+							type: 'decimal(18, 2)',
+							default: 0
+						},
+						{
+							name: 'sale_off_tax_value',
 							type: 'decimal(18, 2)',
 							default: 0
 						},
@@ -269,7 +274,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							enumName: 'operationType'
 						}
 					],
-					'bigint'
+					'int'
 				)
 			})
 		);
@@ -283,16 +288,16 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 					[
 						{
 							name: 'operation_id',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'quantity',
-							type: 'bigint'
+							type: 'int'
 						},
 						{
 							name: 'type',
 							type: 'enum',
-							enum: ['PENDING', 'PRTEXEC', 'TTLEXEC', 'REJECTD', 'CANCELD'],
+							enum: ['PENDING', 'PRTEXEC', 'TTLEXEC', 'REJECTD', 'PRTCCLD', 'TTLCCLD'],
 							enumName: 'statusType'
 						},
 						{
@@ -301,7 +306,7 @@ export class CreateStartTables1616613601973 implements MigrationInterface {
 							default: 'now()'
 						}
 					],
-					'bigint'
+					'int'
 				)
 			})
 		);

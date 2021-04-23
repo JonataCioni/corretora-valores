@@ -1,4 +1,4 @@
-import { EntityRepository, getRepository } from 'typeorm';
+import { EntityRepository, FindManyOptions, getRepository } from 'typeorm';
 import Asset from '../models/Asset';
 
 @EntityRepository(Asset)
@@ -17,6 +17,14 @@ class AssetRepository {
 	public async list(): Promise<Asset[]> {
 		const assetRepository = getRepository(Asset);
 		const resultList = await assetRepository.find();
+		return resultList;
+	}
+	/**
+	 * Filter
+	 */
+	public async filter(options?: FindManyOptions<Asset>): Promise<Asset[]> {
+		const externalAccountRepository = getRepository(Asset);
+		const resultList = await externalAccountRepository.find(options);
 		return resultList;
 	}
 }

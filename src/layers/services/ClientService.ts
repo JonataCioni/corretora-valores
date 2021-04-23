@@ -66,13 +66,13 @@ class ClientService {
 				positions: new Array<IPosition>(),
 				consolidated: 0,
 				checkingAccountAmount: 0,
-				consolidatedGain: ''
+				consolidatedGain: '0%'
 			};
 			const clientRepository = getCustomRepository(ClientRepository);
 			const client = await clientRepository.getById(id);
 			position.checkingAccountAmount = client.amount;
 			const operationRepository = getCustomRepository(OperationRepository);
-			const resultList = await operationRepository.getByClient(id);
+			const resultList = await operationRepository.list(id);
 			const calcPositions: ICalcPosition[] = new Array<ICalcPosition>();
 			resultList.forEach((operation) => {
 				const cp = currentPrice.filter((cpr) => cpr.symbol === operation.asset.code)[0];
@@ -111,7 +111,9 @@ class ClientService {
 					currentGain: currentGain
 				});
 			});
-			position.consolidatedGain = `${((position.consolidated / totalValue) * 100 - 100).toFixed(2)}%`;
+			if (position.consolidated > 0 && totalValue > 0) {
+				position.consolidatedGain = `${((position.consolidated / totalValue) * 100 - 100).toFixed(2)}%`;
+			}
 			return position;
 		} catch (error) {
 			throw new AppError(`Error on list clients: ${error}!`);

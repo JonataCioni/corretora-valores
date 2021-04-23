@@ -7,11 +7,11 @@ class AccountEvent {
 	/**
 	 * Properties
 	 */
-	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'bigint' })
+	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'int' })
 	id: number;
 
 	@IsNotEmpty({ message: 'The External Account not be empty' })
-	@Column('bigint', { name: 'external_account_id' })
+	@Column('int', { name: 'external_account_id' })
 	idExternalAccount: number;
 
 	@Column('enum', { name: 'name', enum: EventType, enumName: 'eventType' })

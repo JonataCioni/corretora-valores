@@ -6,7 +6,7 @@ class Client {
 	/**
 	 * Properties
 	 */
-	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'bigint' })
+	@PrimaryGeneratedColumn('increment', { unsigned: true, name: 'id', type: 'int' })
 	id: number;
 
 	@IsNotEmpty({ message: 'The field name not be empty' })

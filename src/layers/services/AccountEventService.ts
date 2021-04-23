@@ -5,6 +5,7 @@ import AppValidationError from '../../errors/AppValidationError';
 import { EventStatus, EventType } from '../Enums';
 import { IAccountEventRequest } from '../interfaces/IAcountEvent';
 import AccountEvent from '../models/AccountEvent';
+import ExternalAccount from '../models/ExternalAccount';
 import AccountEventRepository from '../repositories/AccountEventRepository';
 import ClientRepository from '../repositories/ClientRepository';
 import ExternalAccountRepository from '../repositories/ExternalAccountRepository';
@@ -15,20 +16,38 @@ class AccountEventService {
 	 */
 	public async save(request: IAccountEventRequest): Promise<AccountEvent> {
 		try {
+			//instance of client repository
+			const clientRepository = getCustomRepository(ClientRepository);
+			//get client by cpf
+			const resultClient = await clientRepository.getByCpf(request.origin.cpf);
+			//verify if client exists
+			if (resultClient === null) {
+				throw new AppError('No Client Found');
+			} else {
+				if (request.event === EventType.DRAFT && request.amount > resultClient.amount) {
+					throw new AppError('Insufficient Balance');
+				}
+			}
+			//instance of external account repository
 			const externalAccountRepository = getCustomRepository(ExternalAccountRepository);
+			//filter by brank code and branch
 			const resultExternalAccount = await externalAccountRepository.filter({
 				where: { bankCode: request.origin.bank, bankBranch: request.origin.branch }
 			});
+			//instance new object ExternalAccount
+			let externalAccount: ExternalAccount = new ExternalAccount();
+			//case not exists, create then
 			if (resultExternalAccount.length <= 0) {
-				throw new AppError('No External Account Found');
+				externalAccount.idClient = resultClient.id;
+				externalAccount.bankCode = request.origin.bank;
+				externalAccount.bankBranch = request.origin.branch;
+				externalAccount = await externalAccountRepository.save(externalAccount);
+			} else {
+				externalAccount = resultExternalAccount[0];
 			}
-			const clientRepository = getCustomRepository(ClientRepository);
-			const resultClient = await clientRepository.getByCpf(request.origin.cpf);
-			if (resultClient === null) {
-				throw new AppError('No Client Found');
-			}
+			//instance new object AccountEvent
 			const accountEvent: AccountEvent = new AccountEvent();
-			accountEvent.idExternalAccount = resultExternalAccount[0].id;
+			accountEvent.idExternalAccount = externalAccount.id;
 			accountEvent.name = request.event;
 			accountEvent.account = request.target.account;
 			accountEvent.amount = request.amount;
